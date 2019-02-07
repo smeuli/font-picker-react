@@ -123,7 +123,6 @@ export default class FontPicker extends Component {
 	 * Download the font previews for all visible font entries and the five after them
 	 */
 	downloadPreviews(e) {
-		console.log('dl');
 		const elementHeight = e.target.scrollHeight / this.fontManager.fonts.length;
 		const downloadIndex = Math.ceil((e.target.scrollTop + e.target.clientHeight) / elementHeight);
 		this.fontManager.downloadPreviews(downloadIndex + 5);
