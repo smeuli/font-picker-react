@@ -1,5 +1,5 @@
 {
-	"name": "font-picker-react",
+	"name": "@zilahir/font-picker-react",
 	"version": "3.0.1",
 	"description": "Font selector component for Google Fonts",
 	"author": "Samuel Meuli <me@samuelmeuli.com>",
@@ -70,6 +70,7 @@
 		"typescript": "^3.3.4000",
 		"yarn": "^1.16.0"
 	},
+	
 	"lint-staged": {
 		"*.{ts,tsx}": [
 			"yarn lint:ts",

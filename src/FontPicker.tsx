@@ -250,11 +250,10 @@ export default class FontPicker extends PureComponent<Props, State> {
 			const found = fonts.find(function(element:any) {
 				return element.family.toLowerCase().includes(keyFromState)
 			});
-			Array.from(document.querySelectorAll("#font-picker ul li")).map((currentFont) => {
+			Array.from(document.querySelectorAll("#font-picker ul li")).map((currentFont) => {				
 				if (found && currentFont.textContent === found.family) {
-					currentFont.scrollIntoView();					
+					currentFont.scrollIntoView();
 				}
-				return true
 			})	
 		})
 	}
