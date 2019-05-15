@@ -32,6 +32,7 @@ interface State {
 	activeFontFamily: string;
 	expanded: boolean;
 	loadingStatus: LoadingStatus;
+	search: string;	
 }
 
 /**
@@ -57,6 +58,8 @@ export default class FontPicker extends PureComponent<Props, State> {
 	// Instance of the FontManager class used for managing, downloading and applying fonts
 	fontManager: FontManager;
 
+	searchInput: HTMLInputElement;
+
 	constructor(props: Props) {
 		super(props);
 
@@ -76,6 +79,7 @@ export default class FontPicker extends PureComponent<Props, State> {
 			activeFontFamily,
 			expanded: false,
 			loadingStatus: "loading",
+			search: activeFontFamily			
 		};
 
 		const options: Options = {
@@ -114,6 +118,7 @@ export default class FontPicker extends PureComponent<Props, State> {
 		this.onSelection = this.onSelection.bind(this);
 		this.setActiveFontFamily = this.setActiveFontFamily.bind(this);
 		this.toggleExpanded = this.toggleExpanded.bind(this);
+		this.searchFonts = this.searchFonts.bind(this);
 	}
 
 	/**
@@ -136,7 +141,10 @@ export default class FontPicker extends PureComponent<Props, State> {
 	 */
 	onClose(e: MouseEvent): void {
 		let targetElement = e.target as Node; // Clicked element
-
+		// clear the search 
+		this.setState({
+			search: this.state.activeFontFamily
+		})
 		do {
 			if (
 				targetElement === document.getElementById(`font-picker${this.fontManager.selectorSuffix}`)
@@ -170,9 +178,10 @@ export default class FontPicker extends PureComponent<Props, State> {
 		this.setState(
 			{
 				activeFontFamily,
+				search: activeFontFamily
 			},
 			(): void => this.fontManager.setActiveFont(activeFontFamily),
-		);
+		);		
 	}
 
 	/**
@@ -197,7 +206,8 @@ export default class FontPicker extends PureComponent<Props, State> {
 									id={`font-button-${fontId}${this.fontManager.selectorSuffix}`}
 									className={isActive ? "active-font" : ""}
 									onClick={this.onSelection}
-									onKeyPress={this.onSelection}
+									onKeyPress={(e) => this.searchFonts(e, font.family)}
+									style={{outline: `none`}}
 								>
 									{font.family}
 								</button>
@@ -223,8 +233,36 @@ export default class FontPicker extends PureComponent<Props, State> {
 		} else {
 			this.setState({
 				expanded: true,
+			}, () => {
+				this.searchInput.select()
 			});
 			document.addEventListener("click", this.onClose);
+		}
+	}
+
+	searchFonts(e:any, fonts:any): void {
+		let keyFromState = this.state.search
+		const keyPressed = e.target.value.toLowerCase()
+		this.setState({
+			search: keyPressed
+		}, () => {
+			keyFromState = this.state.search
+			const found = fonts.find(function(element:any) {
+				return element.family.toLowerCase().includes(keyFromState)
+			});
+			Array.from(document.querySelectorAll("#font-picker ul li")).map((currentFont) => {
+				if (found && currentFont.textContent === found.family) {
+					currentFont.scrollIntoView();					
+				}
+				return true
+			})	
+		})
+	}
+
+	fontSelectByEnter(e:any, selectedFontFamily:string) {
+		if (e.key.toLowerCase() === "enter") {
+			this.setActiveFontFamily(`${selectedFontFamily.charAt(0).toUpperCase()}${selectedFontFamily.slice(1)}`)
+			this.toggleExpanded()
 		}
 	}
 
@@ -243,16 +281,29 @@ export default class FontPicker extends PureComponent<Props, State> {
 			<div
 				id={`font-picker${this.fontManager.selectorSuffix}`}
 				className={expanded ? "expanded" : ""}
-			>
-				<button
-					type="button"
-					className="dropdown-button"
-					onClick={this.toggleExpanded}
-					onKeyPress={this.toggleExpanded}
-				>
-					<p className="dropdown-font-family">{activeFontFamily}</p>
-					<p className={`dropdown-icon ${loadingStatus}`} />
-				</button>
+			>					
+				{
+					!this.state.expanded ? (
+						<button
+							type="button"
+							className="dropdown-button"
+							onClick={this.toggleExpanded}
+						>
+							<p className="dropdown-font-family">{activeFontFamily}</p>
+							<p className={`dropdown-icon ${loadingStatus}`} />
+						</button>
+): (
+	<input 
+		onFocus={(e) => e.target.select()} 
+		type="text" 
+		className="dropdown-button"
+		onChange={(e) => this.searchFonts(e, fonts)}
+		onKeyPress={(e) => this.fontSelectByEnter(e, this.state.search)} 
+		value={this.state.search}
+		ref={(input) => {this.searchInput = input}}
+	/>
+)
+				}
 				{loadingStatus === "finished" && this.generateFontList(fonts)}
 			</div>
 		);
