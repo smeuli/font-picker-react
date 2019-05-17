@@ -82,6 +82,7 @@ The following props can be passed to the `FontPicker` component:
 - **`variants`**: Array of variants which the fonts must include and which will be downloaded on font selection. Example: `["regular", "italic", "700", "700italic"]` (see [all possible values](https://github.com/samuelmeuli/font-picker/blob/master/src/shared/types.ts)). Default: `["regular"]`
 - **`limit`**: Maximum number of fonts to display in the list (the least popular fonts will be omitted). Default: `50`
 - **`sort`**: Sorting attribute for the font list. Possible values: `"alphabet", "popularity"`. Default: `"alphabet"`
+- **`isSearch`**: `true` | `false` When set to `true`, and the font-selector is open, it's posibble to search for a font based on it's `family-name` by typing.
 
 _Currently, only the `activeFontFamily` and `sort` props are reactive._
 
