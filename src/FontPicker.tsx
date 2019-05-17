@@ -248,6 +248,9 @@ export default class FontPicker extends PureComponent<Props, State> {
 		}
 	}
 
+	/**
+	 * Search for fonts in the list by typing
+	 */
 	searchFonts(e: any, fonts: any): void {
 		const { search } = this.state;
 		let keyFromState = search;
