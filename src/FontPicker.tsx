@@ -27,6 +27,7 @@ interface Props {
 	variants: Variant[];
 	limit: number;
 	sort: SortOption;
+	fontManager: FontManager;
 }
 
 interface State {
@@ -64,6 +65,39 @@ export default class FontPicker extends PureComponent<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
+
+		this.setFontManager()
+
+		// Function bindings
+		this.onClose = this.onClose.bind(this);
+		this.onSelection = this.onSelection.bind(this);
+		this.setActiveFontFamily = this.setActiveFontFamily.bind(this);
+		this.toggleExpanded = this.toggleExpanded.bind(this);
+	}
+
+	/**
+	 * After every component update, check whether the activeFontFamily prop has changed. If so,
+	 * call this.setActiveFontFamily with the new font
+	 */
+	componentDidUpdate(prevProps: Props): void {
+		const { activeFontFamily, onChange } = this.props;
+
+		// If active font prop has changed: Update font family in font manager and component state
+		if (activeFontFamily !== prevProps.activeFontFamily) {
+			this.setActiveFontFamily(activeFontFamily);
+		}
+
+		// If onChange prop has changed: Update onChange function in font manager
+		if (onChange !== prevProps.onChange) {
+			this.fontManager.setOnChange(onChange);
+		}
+	}
+
+	setFontManager(): void {
+		if (this.props.fontManager) {
+			this.fontManager = this.props.fontManager;
+			return;
+		}
 
 		const {
 			apiKey,
@@ -105,30 +139,6 @@ export default class FontPicker extends PureComponent<Props, State> {
 				console.error("Error trying to fetch the list of available fonts");
 				console.error(err);
 			});
-
-		// Function bindings
-		this.onClose = this.onClose.bind(this);
-		this.onSelection = this.onSelection.bind(this);
-		this.setActiveFontFamily = this.setActiveFontFamily.bind(this);
-		this.toggleExpanded = this.toggleExpanded.bind(this);
-	}
-
-	/**
-	 * After every component update, check whether the activeFontFamily prop has changed. If so,
-	 * call this.setActiveFontFamily with the new font
-	 */
-	componentDidUpdate(prevProps: Props): void {
-		const { activeFontFamily, onChange } = this.props;
-
-		// If active font prop has changed: Update font family in font manager and component state
-		if (activeFontFamily !== prevProps.activeFontFamily) {
-			this.setActiveFontFamily(activeFontFamily);
-		}
-
-		// If onChange prop has changed: Update onChange function in font manager
-		if (onChange !== prevProps.onChange) {
-			this.fontManager.setOnChange(onChange);
-		}
 	}
 
 	/**
