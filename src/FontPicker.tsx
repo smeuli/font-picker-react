@@ -20,14 +20,14 @@ interface Props {
 	onChange: (font: Font) => void;
 
 	// Optional props
-	pickerId: string;
-	families: string[];
-	categories: Category[];
-	scripts: Script[];
-	variants: Variant[];
-	filter: (font: Font) => boolean;
-	limit: number;
-	sort: SortOption;
+	pickerId?: string;
+	families?: string[];
+	categories?: Category[];
+	scripts?: Script[];
+	variants?: Variant[];
+	filter?: (font: Font) => boolean;
+	limit?: number;
+	sort?: SortOption;
 }
 
 interface State {
